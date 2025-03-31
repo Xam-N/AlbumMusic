@@ -88,7 +88,29 @@ def getPlaylists(accessToken):
     
   return playlistID
 
+def findAlbumID(accessToken, album): #maybe use this instead, sometimes he might not put the full title of the song so it might be hard to find the specific song
+  url = "https://api.spotify.com/v1/search"
+  params = {
+    "q": album,
+    "type":"album",
+    "limit":"1"
+  }
+  header = {
+    "Authorization":'Bearer '+accessToken
+  }
+  response = requests.get(url,params=params,headers=header)
+  print(response)
+  return response['items']['id']
+  
+def findAlbumTracks(accessToken, albumID):
+  pass
+  
+
+
+
 def findSongID(songToSearch, accessToken, album):
+  #print(songToSearch)
+  #print(album)
   songToSearch = songToSearch + " " + album
   url = "https://api.spotify.com/v1/search"
   params = {
@@ -103,6 +125,27 @@ def findSongID(songToSearch, accessToken, album):
   #print(response)
   return response
 
+
+
+def findSongID(songToSearch, accessToken, album):
+  #print(songToSearch)
+  #print(album)
+  songToSearch = songToSearch + " " + album
+  url = "https://api.spotify.com/v1/search"
+  params = {
+    "q" : songToSearch,
+    "type" : "track",
+    "limit":"1"
+  }
+  header = {
+    "Authorization" : 'Bearer ' + accessToken
+  }
+  response = requests.get(url,params=params,headers=header)
+  #print(response)
+  return response
+
+
+
 def addSongToPlaylist(playlistID, songID, accessToken):
     url = f"https://api.spotify.com/v1/playlists/{playlistID}/tracks"
     headers = {
@@ -113,5 +156,5 @@ def addSongToPlaylist(playlistID, songID, accessToken):
         "uris": [f"spotify:track:{songID}"]
     }
     response = requests.post(url, headers=headers, json=data)
-    print(response.json())
+    #print(response.json())
     return response

@@ -1,7 +1,6 @@
 import YoutubeSongListGenerator
 import SpotifyPlaylistGenerator
 import os
-import datetime
 
 def runner():
   
@@ -14,26 +13,47 @@ def runner():
   
   
 
-  channelName = "theneedledrop"
-  vidName = "Kendrick Lamar - To Pimp A Butterfly ALBUM REVIEW"
-  album = vidName.split("ALBUM REVIEW")[0]
-  #album = "Kendrick Lamar - To Pimp A Butterfly"
-  vidName = "Fontaines D.C. - Romance ALBUM REVIEW"
-  album = vidName.split("ALBUM REVIEW")[0]
-  #album = "Fontaines D.C. - Romance"
+  channelID = "UCeWoyf12adY7W2DgPy79A7w"
+
+  playlistID = "PL32sp9oyUIP1BWRYjBgENBmhJqvc36x0S"
   
+  youtubePlaylistVids = []
+  
+  youtubePlaylist = YoutubeSongListGenerator.getYoutubePlaylist(channelID,playlistID)['items']
   
   for video in youtubePlaylist:
+      snip = video['snippet']['title']
+      if "Top" not in snip:
+          youtubePlaylistVids.append(snip)
+          
   
-    songList = YoutubeSongListGenerator.SongList(channelName, vidName)
+  print(youtubePlaylistVids)
+  
+  channelName = "theneedledrop"
+  
+  songList = []
+  
+  accessToken = SpotifyPlaylistGenerator.tokenGen()
+  
+  for video in youtubePlaylistVids:
     
-    accessToken = SpotifyPlaylistGenerator.tokenGen()
+    album = video.split("ALBUM REVIEW")[0]
+
+    songList = (YoutubeSongListGenerator.SongList(channelName, video))   
     
+    print(songList)
+    print(album)
+  
     #playlistID = SpotifyPlaylistGenerator.getPlaylists(accessToken) Playlist does not appear in playlist list
     
     playlistID = "66iZdZJ8PBkxp3C6wPAPdr"
+    
+  
 
     for song in songList:
+      #print(song)
+      #print(accessToken)
+      #print(album)
       songID = SpotifyPlaylistGenerator.findSongID(song, accessToken,album).json()['tracks']['items'][0]['id']
       SpotifyPlaylistGenerator.addSongToPlaylist(playlistID,songID,accessToken)
   
