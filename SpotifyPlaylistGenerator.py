@@ -22,8 +22,7 @@ clientSecret = apiKeys.spotifyClientSecret
 
 redirectURI = 'http://localhost:8888/callback'
 
-def tokenGen():
-  
+def SpotifyTokenGen():  
   
   threading.Thread(target=lambda: app.run(port=8888)).start()
 

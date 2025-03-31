@@ -1,61 +1,47 @@
-import YoutubeSongListGenerator
+import YoutubeSongList
 import SpotifyPlaylistGenerator
 import os
 
+
+videoNumber = input("Number of videos to be added: ") #number of videos to be added - max number is 50
+
+if input(f"Type 'Yes' if '{videoNumber}' was the intended input ") != "Yes":
+  os._exit(0)
+
+youtubeAlbumMusicPlaylistID = "PL32sp9oyUIP1BWRYjBgENBmhJqvc36x0S" #youtube playlist ID
+
+spotifyPlaylistID = "66iZdZJ8PBkxp3C6wPAPdr" #spotify playlistID, make sure to open it on web browser as the url changes compared to the desktop version
+
 def runner():
+   
+  youtubeAlbumMusicPlaylistID = "PL32sp9oyUIP1BWRYjBgENBmhJqvc36x0S"
   
-  #print("Name of the Youtube Channel: ")
-  #channelName = input()
-  #print("Name of the album to review: ")
-  #albumName = input()
+  spotifyAccessToken = SpotifyPlaylistGenerator.SpotifyTokenGen()
   
-  #for each video in youtube playlist
+  spotifyPlaylistID = "66iZdZJ8PBkxp3C6wPAPdr"
   
-  
+  youtube = YoutubeSongList.youtubeInit()
 
-  channelID = "UCeWoyf12adY7W2DgPy79A7w"
+  videos = YoutubeSongList.getPlaylistVideos(youtube,youtubeAlbumMusicPlaylistID,videoNumber)
 
-  playlistID = "PL32sp9oyUIP1BWRYjBgENBmhJqvc36x0S"
-  
-  youtubePlaylistVids = []
-  
-  youtubePlaylist = YoutubeSongListGenerator.getYoutubePlaylist(channelID,playlistID)['items']
-  
-  for video in youtubePlaylist:
-      snip = video['snippet']['title']
-      if "Top" not in snip:
-          youtubePlaylistVids.append(snip)
+  for item in videos:
+    
+      videoID = item['contentDetails']['videoId'] #id of the video
+      playlistVideoID = item['id'] #id of the playlist video
+      
+      videoInfo,AlbumName = YoutubeSongList.getDescription(youtube,videoID)
+      
+      goodSongs = YoutubeSongList.getSongList(videoInfo)
+      
+      print(AlbumName)
+      print(goodSongs)
+      
+      
+      for song in goodSongs:
+        songID = SpotifyPlaylistGenerator.findSongID(song, spotifyAccessToken,AlbumName).json()['tracks']['items'][0]['id']
+        SpotifyPlaylistGenerator.addSongToPlaylist(spotifyPlaylistID,songID,spotifyAccessToken)
           
-  
-  print(youtubePlaylistVids)
-  
-  channelName = "theneedledrop"
-  
-  songList = []
-  
-  accessToken = SpotifyPlaylistGenerator.tokenGen()
-  
-  for video in youtubePlaylistVids:
-    
-    album = video.split("ALBUM REVIEW")[0]
-
-    songList = (YoutubeSongListGenerator.SongList(channelName, video))   
-    
-    print(songList)
-    print(album)
-  
-    #playlistID = SpotifyPlaylistGenerator.getPlaylists(accessToken) Playlist does not appear in playlist list
-    
-    playlistID = "66iZdZJ8PBkxp3C6wPAPdr"
-    
-  
-
-    for song in songList:
-      #print(song)
-      #print(accessToken)
-      #print(album)
-      songID = SpotifyPlaylistGenerator.findSongID(song, accessToken,album).json()['tracks']['items'][0]['id']
-      SpotifyPlaylistGenerator.addSongToPlaylist(playlistID,songID,accessToken)
+      YoutubeSongList.deleteVideo(youtube,playlistVideoID)
   
   os._exit(0)
   

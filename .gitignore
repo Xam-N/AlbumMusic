@@ -2,3 +2,4 @@
 apiKeys.py
 apiKeys.cpython-311.pyc
 
+*.pickle
