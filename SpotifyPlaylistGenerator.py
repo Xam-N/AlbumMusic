@@ -104,24 +104,31 @@ def findAlbumID(accessToken, album): #maybe use this instead, sometimes he might
 def findAlbumTracks(accessToken, albumID):
   pass
   
-
-
-
-def findSongID(songToSearch, accessToken, album):
-  #print(songToSearch)
-  #print(album)
-  songToSearch = songToSearch + " " + album
+def findSongID(songToSearch, accessToken,albumName):
+  year = datetime.date.today().strftime("%Y")
   url = "https://api.spotify.com/v1/search"
+
+  artistName, songTitle = songToSearch.split(" - ", 1) #ensures that only 1 split takes place
+  if "ft." in songTitle:
+    #print(f"Removing featured artists {songTitle}")
+    songTitle = songTitle.split(" ft. ",1)[0]
+    #print(f"Removed featured artists {songTitle}")
+    
   params = {
-    "q" : songToSearch,
+    "q": f"track:{songTitle} artist:{artistName} year:{year} album:{albumName}",
     "type" : "track",
     "limit":"1"
   }
   header = {
-    "Authorization" : 'Bearer ' + accessToken
+    "Authorization":f"Bearer {accessToken}"
   }
+  
   response = requests.get(url,params=params,headers=header)
-  #print(response)
+  
+  if response.json()['tracks']['total'] == '0':
+    print(f"Failed to find {songTitle} {artistName}")
+    return None
+  
   return response
 
 

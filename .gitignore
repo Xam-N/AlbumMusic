@@ -3,3 +3,8 @@ apiKeys.py
 apiKeys.cpython-311.pyc
 
 *.pickle
+/build
+/dist
+/__pycache__
+/__pycache__
+*.pyc
