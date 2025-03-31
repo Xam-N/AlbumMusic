@@ -8,3 +8,4 @@ apiKeys.cpython-311.pyc
 /__pycache__
 /__pycache__
 *.pyc
+runner.spec
